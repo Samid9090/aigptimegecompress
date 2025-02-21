@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aiCompressGPT - Image Compressor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .banner-ad {
+            position: fixed;
+            width: 100%;
+            text-align: center;
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .top-ad { top: 0; }
+        .bottom-ad { bottom: 0; }
+
+        .container {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .upload-box {
+            border: 2px dashed #007bff;
+            padding: 30px;
+            border-radius: 10px;
+            background-color: #eef4ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-box:hover { background-color: #dce6ff; transform: scale(1.05); }
+
+        .controls, .result { margin: 15px 0; }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        .btn:hover { background-color: #0056b3; transform: scale(1.05); }
+
+        .loader {
+            display: none;
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 10px 0;
+        }
+
+        #compressed-img {
+            max-width: 100%;
+            max-height: 150px;
+            display: none;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        #search-level {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner-ad top-ad">Ad Space</div>
+
+    <div class="container">
+        <h1>aiCompressGPT - Image Compressor</h1>
+        <div class="upload-box" id="drop-area">
+            <p>Drag & Drop image here or <span class="browse">browse</span></p>
+            <input type="file" id="file-input" accept="image/*">
+        </div>
+        <div class="controls">
+            <input type="text" id="search-level" placeholder="Search KB (e.g., 100)">
+            <select id="compress-level"></select>
+            <button id="compress-btn" class="btn">Compress Image</button>
+        </div>
+        <div class="loader" id="loader">3</div>
+        <div class="result">
+            <img id="compressed-img" src="" alt="Compressed Image">
+            <a id="download-link" class="btn" href="#" download>Download Compressed Image</a>
+        </div>
+    </div>
+    
+    <div class="banner-ad bottom-ad">Ad Space</div>
+
+    <script>
+        const compressBtn = document.getElementById('compress-btn');
+        const loader = document.getElementById('loader');
+        const downloadLink = document.getElementById('download-link');
+        const fileInput = document.getElementById('file-input');
+        const dropArea = document.getElementById('drop-area');
+        const compressLevel = document.getElementById('compress-level');
+        const searchLevel = document.getElementById('search-level');
+        const compressedImg = document.getElementById('compressed-img');
+        
+        for (let i = 1; i <= 1000; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `${i} KB`;
+            compressLevel.appendChild(option);
+        }
+
+        searchLevel.addEventListener('input', () => {
+            const value = parseInt(searchLevel.value, 10);
+            if (value >= 1 && value <= 1000) {
+                compressLevel.value = value;
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            compressBtn.style.display = 'block';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                compressedImg.src = e.target.result;
+                compressedImg.style.display = 'block';
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        });
+        
+        compressBtn.addEventListener('click', () => {
+            loader.style.display = 'block';
+            let count = 3;
+            loader.textContent = count;
+            const countdown = setInterval(() => {
+                count--;
+                loader.textContent = count;
+                if (count === 0) {
+                    clearInterval(countdown);
+                    loader.style.display = 'none';
+                    downloadLink.style.display = 'block';
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
